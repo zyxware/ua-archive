@@ -14,6 +14,9 @@ While there might be some limitations due to the aggregated nature of data downl
 
 We have successfully assisted many of our customers with downloading UA data to Matomo. If you are considering keeping your Universal Analytics Data, Matomo is an excellent option. We offer UA historical data migration using Matomo as a service. If you are interested, you can checkout a demo here: [Matomo Dashboard](https://engage.zyxware.com/matomo-dashboard)
 
+Also check
+- [Universal Analytics Data: Should You Backup or Let Go?](https://www.zyxware.com/article/6613/universal-analytics-historical-data-backup) - This article talks about the key considerations and options available for backup.
+
 ## Requirements
 
 - Python 3
