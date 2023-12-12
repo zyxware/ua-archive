@@ -22,6 +22,8 @@ Also check
 - Python 3
 - `googleapiclient`
 - `oauth2client`
+- `pyyaml`
+- `argparse`
 
 ## Setup and Installation
 
@@ -40,7 +42,7 @@ It's recommended to use a virtual environment:
 ```sh
 python -m venv venv
 source venv/bin/activate
-pip install google-api-python-client oauth2client
+pip install google-api-python-client oauth2client pyyaml argparse
 ```
 
 3. **Service Account and API Key:**
@@ -49,17 +51,19 @@ pip install google-api-python-client oauth2client
 - Rename the file to `ua-archive.json` and place it in the project directory.
 
 4. **Configure the Script:**
-- Open the script in a text editor.
-- Modify the parameters at the bottom of the script (`api_key`, `view_id`, `dimensions`, `metrics`, `start_date`, `end_date`, `output_file`) as needed.
+- Copy 'settings.yml.defualt' to 'settings.yml' and update 'api_key' with the name of json file generated and 'view_id' with your UA property's view ID.
+- Edit the `reports_config.yml` to add the reports you want to generate.
 
 ## Usage
 
 Run the script with Python:
 
 ```sh
-python ua_archive.py
+python3 analytics_reporter.py --report_id 1 --start 2023-01-01 --end 2023-01-31
 ```
-After successful execution, a CSV file named `UA_report.csv` will be generated in the project directory.
+report_id should be the id in the `reports_config.yml`
+
+After successful execution, a CSV file named `<report_id>_<report_name>_report.csv` will be generated in the project directory.
 
 ## Contributing
 

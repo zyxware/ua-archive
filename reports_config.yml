@@ -1,0 +1,46 @@
+reports:
+  - id: 1
+    name: "User Engagement Over Time"
+    dimensions: ["ga:clientId", "ga:date"]
+    metrics: ["ga:sessions", "ga:sessionDuration", "ga:pageviews"]
+
+  - id: 2
+    name: "User Journey Analysis"
+    dimensions: ["ga:landingPagePath", "ga:exitPagePath", "ga:pagePath", "ga:previousPagePath"]
+    metrics: ["ga:sessions", "ga:pageviews", "ga:entrances", "ga:exits"]
+
+  - id: 3
+    name: "Acquisition Channels and Campaign Performance"
+    dimensions: ["ga:source", "ga:medium", "ga:campaign"]
+    metrics: ["ga:sessions", "ga:users"]
+
+  - id: 4
+    name: "User Segmentation"
+    dimensions: ["ga:userAgeBracket", "ga:userGender", "ga:userType"]
+    metrics: ["ga:users", "ga:sessions", "ga:sessionDuration", "ga:pageviews"]
+
+  - id: 5
+    name: "Conversion Analysis"
+    dimensions: ["ga:goalCompletionLocation", "ga:goalPreviousStep1", "ga:goalPreviousStep2", "ga:goalPreviousStep3"]
+    metrics: ["ga:goalCompletions", "ga:goalConversionRate"]
+
+  - id: 6
+    name: "User Interaction with Content"
+    dimensions: ["ga:pagePath"]
+    metrics: ["ga:pageviews", "ga:uniquePageviews", "ga:avgTimeOnPage"]
+
+  - id: 7
+    name: "Keyword and SEO Analysis"
+    dimensions: ["ga:keyword", "ga:searchQuery"]
+    metrics: ["ga:sessions", "ga:users", "ga:organicSearches"]
+
+  - id: 8
+    name: "Device and Technology Analysis"
+    dimensions: ["ga:deviceCategory", "ga:browser", "ga:operatingSystem"]
+    metrics: ["ga:sessions", "ga:users", "ga:pageviews"]
+
+  - id: 9
+    name: "Custom User Events Tracking"
+    dimensions: ["ga:eventCategory", "ga:eventAction", "ga:eventLabel"]
+    metrics: ["ga:totalEvents", "ga:uniqueEvents"]
+

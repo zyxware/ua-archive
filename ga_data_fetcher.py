@@ -1,25 +1,16 @@
 """
-Analytics Reporter
+Data Fetcher
 
 Author: Vimal Joseph
 More Information: https://www.zyxware.com/article/6662/backup-universal-analytics-data-python
 
-This script generates reports based on Google Analytics data.
+This script fetch the required data using Google Analytics API.
 """
-import csv
 from googleapiclient.discovery import build
 from oauth2client.service_account import ServiceAccountCredentials
 from googleapiclient.errors import HttpError
-from datetime import datetime
 
-def format_date(date_str):
-    """Convert date from 'YYYYMMDD' to 'YYYY-MM-DD' format."""
-    try:
-        return datetime.strptime(date_str, '%Y%m%d').strftime('%Y-%m-%d')
-    except ValueError:
-        return date_str  # Return the original string if it can't be converted
-
-def get_data(api_key, view_id, dimensions, metrics, start_date, end_date):
+def get_data(api_key, view_id, dimensions, metrics, start_date, end_date, date_formatter):
     # Initialize service
     credentials = ServiceAccountCredentials.from_json_keyfile_name(api_key)
     service = build('analyticsreporting', 'v4', credentials=credentials)
@@ -55,7 +46,7 @@ def get_data(api_key, view_id, dimensions, metrics, start_date, end_date):
             all_data = dimensions_data + metrics_data
             for i, header in enumerate(column_header_entries):
                 if header == 'ga:date':
-                    formatted_row[header] = format_date(all_data[i])
+                    formatted_row[header] = date_formatter(all_data[i])
                 else:
                     formatted_row[header] = all_data[i]
             formatted_data.append(formatted_row)
@@ -65,31 +56,3 @@ def get_data(api_key, view_id, dimensions, metrics, start_date, end_date):
         print(f"Error fetching data: {error}")
         return []
 
-def write_to_csv(data, output_file):
-    
-    if not data:
-        print("No data to write to CSV.")
-        return
-
-    with open(output_file, 'w', newline='') as csvfile:
-        writer = csv.DictWriter(csvfile, fieldnames=data[0].keys())
-        writer.writeheader()
-        writer.writerows(data)
-
-# Configure parameters
-api_key = "ua-property.json"
-view_id = "YOUR PROPERTY VIEW ID"  # Replace with your view ID
-dimensions = ["ga:source", "ga:medium", "ga:date"]
-metrics = ["ga:users", "ga:pageviews", "ga:sessions"]
-start_date = "2023-01-01"
-end_date = "2023-01-31"
-output_file = "UA_report.csv"
-
-# Fetch and write data to CSV
-data = get_data(api_key, view_id, dimensions, metrics, start_date, end_date)
-
-if data:
-    write_to_csv(data, output_file)
-    print(f"Successfully saved data to CSV file: {output_file}")
-else:
-    print("No data received from Google Analytics.")
