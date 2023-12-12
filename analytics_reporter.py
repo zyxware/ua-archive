@@ -23,7 +23,7 @@ def generate_report(report_config, start_date, end_date, api_key, view_id, outpu
     dimensions = report_config['dimensions']
     metrics = report_config['metrics']
     page_size = report_config.get('page_size', 1000)  # Default to 1000 if not specified
-    sampling_level = report_config.get('samplingLevel', 'DEFAULT')  # Default to 'DEFAULT' if not specified
+    sampling_level = report_config.get('sampling_level', 'DEFAULT')  # Default to 'DEFAULT' if not specified
 
     next_page_token = None
     all_data = []
