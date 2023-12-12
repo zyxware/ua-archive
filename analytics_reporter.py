@@ -22,14 +22,31 @@ def generate_report(report_config, start_date, end_date, api_key, view_id, outpu
 
     dimensions = report_config['dimensions']
     metrics = report_config['metrics']
+    page_size = report_config.get('page_size', 1000)  # Default to 1000 if not specified
+    sampling_level = report_config.get('samplingLevel', 'DEFAULT')  # Default to 'DEFAULT' if not specified
 
-    data = get_data(api_key, view_id, dimensions, metrics, start_date, end_date, format_date)
+    next_page_token = None
+    all_data = []
+    page_count = 0;
 
-    if data:
-        write_to_csv(data, output_file)
+    while True:
+        print(f"Fetching Page {page_count}")
+        page_count+=1
+        data, next_page_token = get_data(api_key, view_id, dimensions, metrics, start_date, end_date, format_date, page_size, next_page_token, sampling_level)
+        if not data:
+            break
+            
+        all_data.extend(data)
+
+        if not next_page_token:
+            break
+
+    if all_data:
+        write_to_csv(all_data, output_file)
         print(f"Successfully saved report to CSV file: {output_file}")
     else:
         print("No data received for the report.")
+
 
 def main():
     parser = argparse.ArgumentParser(description='Generate Google Analytics reports.')

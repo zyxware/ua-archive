@@ -22,24 +22,31 @@ reports:
   - id: 5
     name: "Conversion Analysis"
     dimensions: ["ga:goalCompletionLocation", "ga:goalPreviousStep1", "ga:goalPreviousStep2", "ga:goalPreviousStep3"]
-    metrics: ["ga:goalCompletions", "ga:goalConversionRate"]
+    metrics: ["ga:goal1Completions", "ga:goal1ConversionRate"]
 
   - id: 6
     name: "User Interaction with Content"
-    dimensions: ["ga:pagePath"]
-    metrics: ["ga:pageviews", "ga:uniquePageviews", "ga:avgTimeOnPage"]
+    dimensions: ["ga:pagePath", "ga:title"]
+    metrics: ["ga:pageviews", "ga:uniquePageviews", "ga:avgTimeOnPage", "ga:entrances"]
+
 
   - id: 7
-    name: "Keyword and SEO Analysis"
-    dimensions: ["ga:keyword", "ga:searchQuery"]
-    metrics: ["ga:sessions", "ga:users", "ga:organicSearches"]
-
+    name: "External Keyword and SEO Analysis"
+    dimensions: ["ga:sourceMedium", "ga:landingPagePath"]
+    metrics: ["ga:sessions", "ga:users", "ga:newUsers", "ga:pageviews", "ga:bounceRate", "ga:sessionDuration"]
+    
   - id: 8
+    name: "Internal Site Search Analysis"
+    dimensions: ["ga:searchKeyword", "ga:searchStartPage", "ga:searchCategory"] 
+    metrics: ["ga:sessions", "ga:users", "ga:pageviews", "ga:searchResultViews", "ga:searchUniques"]
+
+
+  - id: 9
     name: "Device and Technology Analysis"
     dimensions: ["ga:deviceCategory", "ga:browser", "ga:operatingSystem"]
     metrics: ["ga:sessions", "ga:users", "ga:pageviews"]
 
-  - id: 9
+  - id: 10
     name: "Custom User Events Tracking"
     dimensions: ["ga:eventCategory", "ga:eventAction", "ga:eventLabel"]
     metrics: ["ga:totalEvents", "ga:uniqueEvents"]
