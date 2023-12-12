@@ -71,6 +71,7 @@ def main():
     # Construct the file name
     report_name = report_config['name'].replace(' ', '-').lower()
     output_file = f"{report_id}_{report_name}_report.csv"
+    print(f"Generate report for {report_name}")
     generate_report(report_config, start_date, end_date, api_key, view_id, output_file)
 
 
