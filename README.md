@@ -2,9 +2,12 @@
 
 This Python script fetches data using the Google Analytics Reporting API v4 and writes it to a CSV file. It is designed to retrieve specific metrics and dimensions within a certain date range for a particular view (profile). This script is suitable for simple use cases, such as when you only need data over a short timeline or with a small number of dimensions or metrics.
 
+
 # Universal Analytics End Of Life
 
-Universal Analytics (UA) stopped processing data on July 1st, 2023. Google has announced a complete shutdown of the UA interface and APIs on July 1st, 2024. If you have already transitioned to Google Analytics 4 for your website data collection, this script can assist you in downloading data from your Universal Analytics properties. Downloading data from UA is not as straightforward as you might think. Google imposes a limit of 50,000 API calls per day, and if you have years of data to download with numerous dimensions and metrics, the script can quickly become complex.
+Universal Analytics (UA) stopped processing data on July 1st, 2023. Google has announced a complete shutdown of the UA interface and APIs on July 1st, 2024. If you have already transitioned to Google Analytics 4 for your website data collection, this script can assist you in downloading data from your Universal Analytics properties. Downloading data from UA is not as straightforward as you might think. Google imposes a limit of 50,000 API calls per day, and if you have years of data to download with numerous dimensions and metrics, and this script make it easier for you to download your reports from UA before it is gone.
+
+Also see [3 Free Tools to Backup Google Universal Analytics Reports](https://www.zyxware.com/article/6707/3-free-tools-to-backup-google-universal-analytics-reports)
 
 ## Matomo
 
