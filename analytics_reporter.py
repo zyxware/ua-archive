@@ -32,7 +32,7 @@ def generate_report(report_config, start_date, end_date, api_key, view_id, outpu
     while True:
         print(f"Fetching Page {page_count}")
         page_count+=1
-        data, next_page_token = get_data(api_key, view_id, dimensions, metrics, start_date, end_date, format_date, page_size, next_page_token, sampling_level)
+        data, next_page_token = get_data(api_key, view_id, dimensions, metrics, start_date, end_date, format_date, page_size, next_page_token, sampling_level, metrics_filter)
         if not data:
             break
             
