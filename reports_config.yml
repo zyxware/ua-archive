@@ -28,6 +28,7 @@ reports:
     name: "User Interaction with Content"
     dimensions: ["ga:pagePath", "ga:title"]
     metrics: ["ga:pageviews", "ga:uniquePageviews", "ga:avgTimeOnPage", "ga:entrances"]
+    metrics_filter:  [{'metricName': 'ga:pageviews','operator': 'GREATER_THAN','comparisonValue': '100'}]
 
 
   - id: 7
