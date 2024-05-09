@@ -3,6 +3,9 @@ reports:
     name: "User Engagement Over Time"
     dimensions: ["ga:clientId", "ga:date"]
     metrics: ["ga:sessions", "ga:sessionDuration", "ga:pageviews"]
+    metrics_filter:  [{'metricName': 'ga:pageviews','operator': 'GREATER_THAN','comparisonValue': '100'}]
+    page_size: 500
+    sampling_level: 'DEFAULT'
 
   - id: 2
     name: "User Journey Analysis"
