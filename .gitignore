@@ -1,0 +1,10 @@
+*.csv
+reports_config.yml
+ua-archive.json
+settings.yml
+
+
+__pycache__/
+*.py[cod]
+*$py.class
+venv/

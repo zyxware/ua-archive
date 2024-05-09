@@ -10,29 +10,34 @@ from googleapiclient.discovery import build
 from oauth2client.service_account import ServiceAccountCredentials
 from googleapiclient.errors import HttpError
 
-def get_data(api_key, view_id, dimensions, metrics, start_date, end_date, date_formatter, page_size=1000, next_page_token=None, sample_size='DEFAULT'):
+def get_data(api_key, view_id, dimensions, metrics, start_date, end_date, date_formatter, page_size=1000, next_page_token=None, sample_size='DEFAULT', metric_filter=False):
     # Initialize service
     credentials = ServiceAccountCredentials.from_json_keyfile_name(api_key)
     service = build('analyticsreporting', 'v4', credentials=credentials)
 
+    # Prepare the report request body
+    report_request = {
+        'viewId': view_id,
+        'dateRanges': [{'startDate': start_date, 'endDate': end_date}],
+        'dimensions': [{'name': d} for d in dimensions],
+        'metrics': [{'expression': m} for m in metrics],
+        'pageSize': page_size,
+        'pageToken': next_page_token,
+        'samplingLevel': sample_size,
+    }
+
+    # Add metric filters if provided and not False
+    if metric_filter:
+        report_request['metricFilterClauses'] = [{
+            'filters': metric_filter
+        }]
+
+    # Build and execute the full request
     try:
-        # Build and execute request
-        request = service.reports().batchGet(
-            body={
-                'reportRequests': [
-                    {
-                        'viewId': view_id,
-                        'dateRanges': [{'startDate': start_date, 'endDate': end_date}],
-                        'dimensions': [{'name': d} for d in dimensions],
-                        'metrics': [{'expression': m} for m in metrics],
-                        'pageSize': page_size,
-                        'pageToken': next_page_token,
-                        'samplingLevel': sample_size
-                    }
-                ]
-            }
-        )
-        response = request.execute()
+        response = service.reports().batchGet(
+            body={'reportRequests': [report_request]}
+        ).execute()
+
         report = response.get('reports', [])[0]  # Assuming one report request
 
         # Process report data
@@ -61,4 +66,3 @@ def get_data(api_key, view_id, dimensions, metrics, start_date, end_date, date_f
     except HttpError as error:
         print(f"Error fetching data: {error}")
         return [], None
-
