@@ -12,7 +12,7 @@ def write_to_csv(data, output_file):
         print("No data to write to CSV.")
         return
 
-    with open(output_file, 'w', newline='') as csvfile:
+    with open(output_file, 'w', newline='', encoding='utf-8') as csvfile:
         writer = csv.DictWriter(csvfile, fieldnames=data[0].keys())
         writer.writeheader()
         writer.writerows(data)
