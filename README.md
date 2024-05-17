@@ -45,7 +45,7 @@ This is a Free Software licenced under GNU GPL v2.0 or above. Please see [What i
    - Rename the file to `ua-archive.json` and place it in the project directory.
 
 4. **Configure the Script:**
-   - Copy `settings.yml.default` to `settings.yml` and update `api_key` with the name of the JSON file generated and `view_id` with your UA property's view ID.
+   - Copy `settings.yml.default` to `settings.yml` and update `api_key` with the name of the generated JSON file (`ua-archive.json`) and `view_id` with the view ID of your UA property. You can find the view id in Universal Analytics under settings and view settings.
    - Edit the `reports_config.yml` to add the reports you want to generate.
    - Refer to `reports_config.yml.example` for additional parameters like `metrics_filter`, `page_size`, and `sampling_level`.
 
