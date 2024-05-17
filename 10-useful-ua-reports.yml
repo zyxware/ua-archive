@@ -48,6 +48,3 @@ reports:
     name: "E-commerce Performance"
     dimensions: ["ga:sourceMedium", "ga:landingPagePath"]
     metrics: ["ga:transactions", "ga:transactionRevenue", "ga:revenuePerTransaction"]
-    
-    
-    

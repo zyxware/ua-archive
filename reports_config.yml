@@ -34,10 +34,10 @@ reports:
     name: "External Keyword and SEO Analysis"
     dimensions: ["ga:sourceMedium", "ga:landingPagePath"]
     metrics: ["ga:sessions", "ga:users", "ga:newUsers", "ga:pageviews", "ga:bounceRate", "ga:sessionDuration"]
-    
+
   - id: 8
     name: "Internal Site Search Analysis"
-    dimensions: ["ga:searchKeyword", "ga:searchStartPage", "ga:searchCategory"] 
+    dimensions: ["ga:searchKeyword", "ga:searchStartPage", "ga:searchCategory"]
     metrics: ["ga:sessions", "ga:users", "ga:pageviews", "ga:searchResultViews", "ga:searchUniques"]
 
 

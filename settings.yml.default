@@ -2,4 +2,5 @@ analytics_settings:
   reports_config: "reports_config.yml"
   api_key: "REPLACE with JSON file name from Google"
   view_id: "REPLACE with UA View ID"
+  property_name: "REPLACE with the UA property name"
 

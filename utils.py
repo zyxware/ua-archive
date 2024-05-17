@@ -1,5 +1,6 @@
 import csv
 import os
+import json
 
 def format_date(date_str):
     """Convert date from 'YYYYMMDD' to 'YYYY-MM-DD' format."""
@@ -27,18 +28,19 @@ def append_to_csv(data, output_file):
         writer = csv.DictWriter(csvfile, fieldnames=data[0].keys())
         writer.writerows(data)
 
-def read_last_page_token(progress_file):
-    if not os.path.exists(progress_file):
-        return None, 0
-    with open(progress_file, 'r') as file:
-        content = file.read().strip()
-        if ',' in content:
-            token, total_records_downloaded = content.split(',')
-            return token, int(total_records_downloaded)
-        else:
-            return content, 0
-
 def clear_csv_file(csv_file):
     if os.path.exists(csv_file):
         os.remove(csv_file)
 
+def clean_name(name):
+    return name.replace(' ', '-').lower()
+
+def load_progress(progress_file):
+    if not os.path.exists(progress_file):
+        return {}
+    with open(progress_file, 'r') as file:
+        return json.load(file)
+
+def save_progress(progress_file, progress_data):
+    with open(progress_file, 'w') as file:
+        json.dump(progress_data, file)
