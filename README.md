@@ -44,10 +44,34 @@ This is a Free Software licenced under GNU GPL v2.0 or above. Please see [What i
    - Download the JSON key file.
    - Rename the file to `ua-archive.json` and place it in the project directory.
 
-4. **Configure the Script:**
-   - Copy `settings.yml.default` to `settings.yml` and update `api_key` with the name of the generated JSON file (`ua-archive.json`) and `view_id` with the view ID of your UA property. You can find the view id in Universal Analytics under settings and view settings.
-   - Edit the `reports_config.yml` to add the reports you want to generate.
-   - Refer to `reports_config.yml.example` for additional parameters like `metrics_filter`, `page_size`, and `sampling_level`.
+### Configure the Script
+
+1. **Copy and Update Settings:**
+   - Copy `settings.yml.default` to `settings.yml`:
+     ```bash
+     cp settings.yml.default settings.yml
+     ```
+   - Update the following fields in `settings.yml`:
+     - `reports_config`: Replace with the name of file where you define the reports. See reports_config.yml.example
+     - `api_key`: Replace with the name of the generated JSON file (`ua-archive.json`).
+     - `view_id`: Replace with the view ID of your UA property. You can find the view ID in Universal Analytics under settings and view settings.
+     - `property_name`: Replace with the UA property name.
+
+     Example `settings.yml`:
+     ```yaml
+     analytics_settings:
+       reports_config: "reports_config.yml"
+       api_key: "ua-archive.json"
+       view_id: "123456789"
+       property_name: "Your UA Property Name"
+     ```
+
+2. **Reports Configuration:**
+   - Copy `reports_config.yml.example` to `reports_config.yml`:
+     ```bash
+     cp reports_config.yml.example reports_config.yml
+     ```
+   - Edit the `reports_config.yml` file to add the reports you want to generate. You can use `ua-reports.yml` or `10-useful-reports.yml` as additional examples.
 
 ## Usage
 
