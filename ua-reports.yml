@@ -165,3 +165,9 @@ reports:
     metrics: ["ga:sessions", "ga:pageviews", "ga:uniquePageviews", "ga:avgTimeOnPage", "ga:bounceRate", "ga:exitRate", "ga:totalEvents", "ga:searchUniques", "ga:avgSearchResultViews"]
     # Comprehensive view of user behavior data.
     # Detailed analysis of content performance, user interactions, and search behavior.
+    
+  - id: 24
+    name: "Acquisition Keywords"
+    dimensions: ["ga:keyword"]
+    metrics: ["ga:sessions", "ga:users", "ga:newUsers", "ga:bounceRate", "ga:pageviewsPerSession", "ga:avgSessionDuration", "ga:goal1Completions"]
+    # The keyword searched by users to reach your property.
