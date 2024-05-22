@@ -38,16 +38,50 @@ def signal_handler(sig, frame):
     logging.info("You pressed Ctrl+C! Waiting for the current request to complete...")
     interrupted = True
 
-def construct_output_file(property_name, view_id, report_id, report_name):
+def construct_log_file(view_id, report_name, sequence=None, log_type="progress"):
+    """Construct the log file name based on provided parameters."""
+    log_file_name = f"{view_id}_{log_type}.log"
+    if sequence:
+        log_file_name = f"{view_id}_{log_type}.log"
+    return log_file_name
+
+def log_sampling_info(output_dir, view_id, report_name, sampling_info, sequence=None):
+    """Log sampling information to a log file."""
+    sampling_log_file = os.path.join(output_dir, construct_log_file(view_id, report_name, sequence, "sampling"))
+    with open(sampling_log_file, 'a') as log_file:
+        log_file.write(f"Sampling Info for View ID {view_id}, Report: {report_name}:\n")
+        log_file.write(f"  Is Sampled: {sampling_info['is_sampled']}\n")
+        log_file.write(f"  Samples Read Counts: {sampling_info['samples_read_counts']}\n")
+        log_file.write(f"  Sampling Space Sizes: {sampling_info['sampling_space_sizes']}\n")
+        log_file.write("\n")
+
+def construct_output_file(property_name, view_id, report_id, report_name, sequence=None):
     """Construct the output file name based on provided parameters."""
     property_name_clean = clean_name(property_name) if property_name else ""
     report_name_clean = clean_name(report_name)
-    if property_name_clean:
-        return f"{property_name_clean}_{view_id}_{report_id}_{report_name_clean}_report.csv"
-    else:
-        return f"{view_id}_{report_id}_{report_name_clean}_report.csv"
 
-def generate_report(report_config, start_date, end_date, api_key, view_id, output_file):
+    output_dir = f"output/{view_id}_{property_name_clean}"
+    os.makedirs(output_dir, exist_ok=True)
+
+    if property_name_clean:
+        if sequence:
+            return f"{output_dir}/{property_name_clean}_{view_id}_{report_id}_{report_name_clean}_report_{sequence}.csv"
+        else:
+            return f"{output_dir}/{property_name_clean}_{view_id}_{report_id}_{report_name_clean}_report.csv"
+    else:
+        if sequence:
+            return f"{output_dir}/{view_id}_{report_id}_{report_name_clean}_report_{sequence}.csv"
+        else:
+            return f"{output_dir}/{view_id}_{report_id}_{report_name_clean}_report.csv"
+
+def log_quota_exceeded(view_id):
+    """Log the date and time when quota is exceeded."""
+    quota_log_file = f"quota_exceeded.log"
+    with open(quota_log_file, 'a') as log_file:
+        log_file.write(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
+
+
+def generate_report(report_config, start_date, end_date, api_key, view_id, report_name, output_file, sequence=None):
     """Generate report based on provided configuration."""
     global interrupted
     success = False
@@ -59,11 +93,12 @@ def generate_report(report_config, start_date, end_date, api_key, view_id, outpu
 
     dimensions = report_config['dimensions']
     metrics = report_config['metrics']
-    page_size = report_config.get('page_size', 1000)  # Default to 1000 if not specified
+    page_size = report_config.get('page_size', 5000)  # Default to 5000 if not specified
     sampling_level = report_config.get('sampling_level', 'DEFAULT')  # Default to 'DEFAULT' if not specified
     metrics_filter = report_config.get('metrics_filter', False)
 
-    progress_file = f"{view_id}_progress.log"
+    output_dir = os.path.dirname(output_file)
+    progress_file = os.path.join(output_dir, construct_log_file(view_id, report_name, sequence, "progress"))
     progress_data = load_progress(progress_file)
 
     total_records_downloaded = 0
@@ -95,7 +130,17 @@ def generate_report(report_config, start_date, end_date, api_key, view_id, outpu
                 break
 
             try:
-                data, next_page_token = get_data(api_key, view_id, dimensions, metrics, start_date, end_date, format_date, page_size, next_page_token, sampling_level, metrics_filter)
+                data, next_page_token, sampling_info, quota_exceeded = get_data(api_key, view_id, dimensions, metrics, start_date, end_date, format_date, page_size, next_page_token, sampling_level, metrics_filter)
+                if quota_exceeded:
+                    log_quota_exceeded(view_id)
+                    break
+                if sampling_info['is_sampled']:
+                  logging.info("Data is sampled.")
+                  logging.info(f"Sampling Read Counts: {sampling_info['samples_read_counts']}")
+                  logging.info(f"Sample Space Sizes:, {sampling_info['sampling_space_sizes']}")
+                  log_sampling_info(output_dir, view_id, report_name, sampling_info, sequence)
+                else:
+                  logging.info("Data is not sampled.")
                 if not data:
                     logging.info(f"No data available to download for {output_file}")
                     break
@@ -116,6 +161,10 @@ def generate_report(report_config, start_date, end_date, api_key, view_id, outpu
                 if not next_page_token or interrupted:
                     break
 
+            except ValueError as e:
+                logging.error(f"ValueError: {e}")
+                logging.error(traceback.format_exc())
+                break  # Exit the loop on any error and save progress
             except Exception as e:
                 logging.error(f"An error occurred while fetching data: {e}")
                 logging.error(traceback.format_exc())
@@ -130,16 +179,16 @@ def generate_report(report_config, start_date, end_date, api_key, view_id, outpu
         if success and data:
             logging.info(f"Data available in CSV file: {output_file}")
 
-def generate_all_reports(report_configs, start_date, end_date, api_key, view_id, property_name):
+def generate_all_reports(report_configs, start_date, end_date, api_key, view_id, property_name, sequence=None):
     """Generate all reports specified in the configuration."""
     property_name_clean = clean_name(property_name) if property_name else ""
 
     for report_config in report_configs:
         report_name = report_config['name']
-        output_file = construct_output_file(property_name, view_id, report_config['id'], report_name)
+        output_file = construct_output_file(property_name, view_id, report_config['id'], report_name, sequence)
 
         logging.info(f"Generating report for {report_name}")
-        generate_report(report_config, start_date, end_date, api_key, view_id, output_file)
+        generate_report(report_config, start_date, end_date, api_key, view_id, report_name, output_file, sequence)
         if interrupted:
             logging.info("Interrupted! Stopping further report generation.")
             break
@@ -153,6 +202,7 @@ def main():
     parser.add_argument('-s', '--start', type=str, required=True, help='Start date (YYYY-MM-DD)')
     parser.add_argument('-e', '--end', type=str, required=True, help='End date (YYYY-MM-DD)')
     parser.add_argument('--settings', type=str, help='Path to settings YAML file')
+    parser.add_argument('--sequence', type=str, help='Optional sequence prefix for the output file name')
     args = parser.parse_args()
 
     settings_file = args.settings if args.settings else "settings.yml"
@@ -172,12 +222,12 @@ def main():
             logging.error(f"Report configuration for ID {args.report_id} not found.")
             return
         report_name = report_config['name']
-        output_file = construct_output_file(property_name, view_id, args.report_id, report_name)
+        output_file = construct_output_file(property_name, view_id, args.report_id, report_name, args.sequence)
 
         logging.info(f"Generate report for {report_name}")
-        generate_report(report_config, args.start, args.end, api_key, view_id, output_file)
+        generate_report(report_config, start_date, end_date, api_key, view_id, report_name, output_file, sequence)
     else:
-        generate_all_reports(report_configs['reports'], args.start, args.end, api_key, view_id, property_name)
+        generate_all_reports(report_configs['reports'], args.start, args.end, api_key, view_id, property_name, args.sequence)
 
 if __name__ == "__main__":
     main()
