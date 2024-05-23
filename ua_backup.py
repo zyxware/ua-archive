@@ -85,8 +85,8 @@ def check_quota_exceeded():
             lines = log_file.readlines()
             if lines:
                 last_line = lines[-1].strip()
-                last_exceed_time = datetime.strptime(last_line, '%Y-%m-%d %H:%M:%S')
-                if datetime.now() - last_exceed_time < timedelta(hours=24):
+                last_exceed_time = datetime.datetime.strptime(last_line, '%Y-%m-%d %H:%M:%S')
+                if datetime.datetime.now() - last_exceed_time < datetime.timedelta(hours=24):
                     logging.info("Quota was exceeded less than 24 hours ago. Exiting.")
                     return True
     return False
