@@ -13,6 +13,7 @@ import os
 import traceback
 import json
 import logging
+from datetime import datetime
 from ga_data_fetcher import get_data
 from utils import format_date, write_to_csv, append_to_csv, clear_csv_file, clean_name, load_progress, save_progress
 

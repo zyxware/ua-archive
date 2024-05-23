@@ -9,6 +9,7 @@ This script fetch the required data using Google Analytics API.
 from googleapiclient.discovery import build
 from oauth2client.service_account import ServiceAccountCredentials
 from googleapiclient.errors import HttpError
+import logging
 
 def get_data(api_key, view_id, dimensions, metrics, start_date, end_date, date_formatter, page_size=5000, next_page_token=None, sample_size='DEFAULT', metric_filter=False):
     # Initialize service
