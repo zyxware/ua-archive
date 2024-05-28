@@ -24,7 +24,7 @@ def merge_report_files(input_dir, output_dir):
             report_id = match.group(3)
             report_name = match.group(4)
             sequence = int(match.group(5))
-            
+
             key = f"{base_name}_{view_id}_{report_id}_{report_name}"
             if key not in report_files:
                 report_files[key] = []
@@ -49,9 +49,9 @@ def merge_report_files(input_dir, output_dir):
                     if start_date is None:
                         start_date = df['ga:date'].iloc[0]
                     end_date = df['ga:date'].iloc[-1]
-                num_records = len(df) - 1 if not merged_df.empty else len(df)  # Subtract header only if it's not the first file
+                num_records = len(df)  # Count all rows, no header adjustment
                 total_records += num_records
-                merged_df = pd.concat([merged_df, df], ignore_index=True) if merged_df.empty else pd.concat([merged_df, df.iloc[1:]], ignore_index=True)
+                merged_df = pd.concat([merged_df, df], ignore_index=True)
 
             # Write the merged dataframe to CSV
             merged_df.to_csv(output_file, index=False)
@@ -69,4 +69,3 @@ if __name__ == "__main__":
     output_dir = args.output_dir
 
     merge_report_files(input_dir, output_dir)
-

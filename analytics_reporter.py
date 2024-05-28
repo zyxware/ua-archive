@@ -226,7 +226,7 @@ def main():
         output_file = construct_output_file(property_name, view_id, args.report_id, report_name, args.sequence)
 
         logging.info(f"Generate report for {report_name}")
-        generate_report(report_config, start_date, end_date, api_key, view_id, report_name, output_file, sequence)
+        generate_report(report_config, args.start, args.end, api_key, view_id, report_name, output_file, args.sequence)
     else:
         generate_all_reports(report_configs['reports'], args.start, args.end, api_key, view_id, property_name, args.sequence)
 
