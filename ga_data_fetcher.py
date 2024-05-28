@@ -9,8 +9,9 @@ This script fetch the required data using Google Analytics API.
 from googleapiclient.discovery import build
 from oauth2client.service_account import ServiceAccountCredentials
 from googleapiclient.errors import HttpError
+import logging
 
-def get_data(api_key, view_id, dimensions, metrics, start_date, end_date, date_formatter, page_size=1000, next_page_token=None, sample_size='DEFAULT', metric_filter=False):
+def get_data(api_key, view_id, dimensions, metrics, start_date, end_date, date_formatter, page_size=5000, next_page_token=None, sample_size='DEFAULT', metric_filter=False):
     # Initialize service
     credentials = ServiceAccountCredentials.from_json_keyfile_name(api_key)
     service = build('analyticsreporting', 'v4', credentials=credentials)
@@ -45,6 +46,14 @@ def get_data(api_key, view_id, dimensions, metrics, start_date, end_date, date_f
         column_header_entries = report['columnHeader']['dimensions'] + \
                                 [entry['name'] for entry in report['columnHeader']['metricHeader']['metricHeaderEntries']]
         rows = report.get('data', {}).get('rows', [])
+        samples_read_counts = report.get('data', {}).get('samplesReadCounts', [])
+        sampling_space_sizes = report.get('data', {}).get('samplingSpaceSizes', [])
+        is_sampled = bool(samples_read_counts and sampling_space_sizes)
+        sampling_info = {
+            'is_sampled': is_sampled,
+            'samples_read_counts': samples_read_counts,
+            'sampling_space_sizes': sampling_space_sizes
+        }
 
         for row in rows:
             formatted_row = {}
@@ -61,8 +70,16 @@ def get_data(api_key, view_id, dimensions, metrics, start_date, end_date, date_f
         # Get the next page token, if any
         new_next_page_token = report.get('nextPageToken', None)
 
-        return formatted_data, new_next_page_token
+        return formatted_data, new_next_page_token, sampling_info, False
 
     except HttpError as error:
-        print(f"Error fetching data: {error}")
-        return [], None
+        if error.resp.status == 429:
+            logging.error("Quota Error: Quota exceeded. Please try again later.")
+            return [], None, {'is_sampled': False, 'samples_read_counts': [], 'sampling_space_sizes': []}, True
+        else:
+            logging.error(f"Error fetching data: {error}")
+            return [], None, {'is_sampled': False, 'samples_read_counts': [], 'sampling_space_sizes': []}, False
+    except Exception as e:
+        logging.error(f"An error occurred: {e}")
+        return [], None, {'is_sampled': False, 'samples_read_counts': [], 'sampling_space_sizes': []}, False
+

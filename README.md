@@ -20,6 +20,7 @@ This is a Free Software licenced under GNU GPL v2.0 or above. Please see [What i
 - `oauth2client`
 - `pyyaml`
 - `argparse`
+- `pandas`
 
 ## Setup and Installation
 
@@ -36,7 +37,7 @@ This is a Free Software licenced under GNU GPL v2.0 or above. Please see [What i
     ```sh
     python -m venv venv
     source venv/bin/activate
-    pip install google-api-python-client oauth2client pyyaml argparse
+    pip install google-api-python-client oauth2client pyyaml argparse pandas
     ```
 
 3. **Service Account and API Key:**
@@ -113,6 +114,26 @@ python3 analytics_reporter.py --report_id 1 --start 2023-01-01 --end 2023-01-31
 ```
 
 The script will automatically resume downloading from the last saved progress.
+
+### Avoid Sampling
+
+The Google Analytics Reporting API may return a sample of sessions if the date range is very large or the number of records in a query is very large. To address this, we have included a wrapper script `ua_backup.py`, which can take the same list of arguments as `analytics_reporter.py`. This script will split the date range into smaller chunks based on the value in the `--report_level` argument. The available options are 'day', 'week', 'month', and 'year'.
+
+**Example:**
+
+```sh
+python3 ua_backup.py --report_id 1 --start 2020-01-01 --end 2023-01-31 --report_level day
+```
+
+This will run the query for each day and store the results as separate CSV files in the output folder. The script `merge_report.py` can be used to merge all the individual CSV files into a single CSV file.
+
+```sh
+python3 merge_report.py output/123423_ua-property full_report
+```
+
+You will get the merged CSV report in the `full_report` folder.
+
+**Note:** The system uses `ua-backup-execution.log` to keep track of the last script executed to resume execution if any error occurs. It also uses `quota_exceeded.log` to track whether the quota was exceeded. The `<view-id>_progress.log` is used to track individual reports. If you want to execute the script as a fresh one, starting from the beginning, you should remove these log files.
 
 ### Debugging
 
