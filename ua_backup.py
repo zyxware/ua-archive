@@ -63,12 +63,14 @@ def split_date_range(start, end, report_level):
             periods.append((current_start.strftime("%Y-%m-%d"), current_end.strftime("%Y-%m-%d")))
             current_start = current_end + datetime.timedelta(days=1)
     elif report_level == 'year':
-        delta = datetime.timedelta(days=365)  # Approximation
-        for current_start in date_range(start_date, end_date, delta):
-            current_end = current_start + delta - datetime.timedelta(days=1)
+        current_start = start_date
+        while current_start <= end_date:
+            next_year_start = current_start.replace(year=current_start.year + 1, month=1, day=1)
+            current_end = next_year_start - datetime.timedelta(days=1)
             if current_end > end_date:
                 current_end = end_date
             periods.append((current_start.strftime("%Y-%m-%d"), current_end.strftime("%Y-%m-%d")))
+            current_start = next_year_start
 
     return periods
 
